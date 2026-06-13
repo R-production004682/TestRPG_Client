@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.Networking;
+using System.Threading;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace TestRPG.Cliant.Api
 {
@@ -11,6 +13,11 @@ namespace TestRPG.Cliant.Api
 
         public HealthApiClient(string baseUrl)
         {
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new ArgumentException("Base URL cannot be null or empty.", nameof(baseUrl));
+            }
+
             this.baseUrl = baseUrl.TrimEnd('/');
         }
 
@@ -21,30 +28,39 @@ namespace TestRPG.Cliant.Api
         /// </summary>
         /// <param name="onSuccess"></param>
         /// <param name="onFailure"></param>
-        public IEnumerator GetHealth (
-            Action<HealthResponseDto> onSuccess,
-            Action<string> onFailure)
+        public async Task<string> GetHealthAsync (CancellationToken cancellationToken)
         {
             using var request = UnityWebRequest.Get($"{baseUrl}/health");
-            
-            yield return request.SendWebRequest();
-            
+
+            // キャンセル処理のサポート
+            await request.SendWebRequest().ToUniTask(cancellationToken: cancellationToken);
+
             if (request.result != UnityWebRequest.Result.Success)
             {
-                onFailure?.Invoke(
-                    $"Health API request failed: {request.responseCode} {request.error}");
-                yield break;
+                throw new Exception($"Health API request failed: {request.responseCode} {request.error}");
             }
 
-            var response = JsonUtility.FromJson<HealthResponseDto>(
-                request.downloadHandler.text);
+            // レスポンスの内容を検証
+            var jsonText = request.downloadHandler.text;
+            if (string.IsNullOrEmpty(jsonText))
+            {
+                throw new Exception("Health API response is empty.");
+            }
 
-            onSuccess?.Invoke(response);
+            var response = JsonUtility.FromJson<HealthResponseDto>(jsonText);
+
+            // 正常レスポンスの検証
+            if (response == null || string.IsNullOrEmpty(response.status))
+            {
+                throw new Exception("Health API response format is invalid or status is missing.");
+            }
+
+            return response.status;
         }
     }
 
     [Serializable]
-    public sealed class HealthResponseDto
+    internal sealed class HealthResponseDto
     {
         public string status;
     }

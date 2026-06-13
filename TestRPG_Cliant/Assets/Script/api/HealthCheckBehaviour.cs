@@ -1,4 +1,7 @@
+using System;
 using UnityEngine;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using TestRPG.Cliant.Api;
 using TestRPG.Client.Api.Settings;
 
@@ -17,12 +20,34 @@ namespace TestRPG.Cliant
                 return;
             }
 
+            // キャンセルトークンを取得して、サーバーの状態を確認する非同期処理を開始
+            var token = this.GetCancellationTokenOnDestroy();
+            CheckHealthAsync(token).Forget();
+        }
+
+        /// <summary>
+        /// api/health エンドポイントにリクエストを送ってサーバーの状態を確認
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async UniTaskVoid CheckHealthAsync(CancellationToken cancellationToken)
+        {
+            // HealthApiClient を作成して api/health エンドポイントにリクエストを送る
             var cliant = new HealthApiClient(apiSettings.BaseUrl);
 
-            StartCoroutine(cliant.GetHealth(
-                response => Debug.Log($"<color=green>Health API status: {response.status}</color>"),
-                error => Debug.LogError($"Health API error: {error}")
-            ));
+            try
+            {
+                var status = await cliant.GetHealthAsync(cancellationToken);
+                Debug.Log($"<color=green>Health API status: {status}</color>");
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("Health API request was canceled.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Health API error: {ex.Message}");
+            }
         }
     }
 }
