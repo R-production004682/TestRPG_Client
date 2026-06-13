@@ -1,0 +1,7 @@
+# Unityのmetaファイルやバイナリファイルはプルリク上見ても意味ないので除外
+*.meta -diff
+*.psd -diff
+*.fbx -diff
+*.anim -diff
+*.unity -diff
+*.prefab -diff
