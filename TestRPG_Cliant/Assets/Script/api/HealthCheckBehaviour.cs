@@ -2,10 +2,10 @@ using System;
 using UnityEngine;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using TestRPG.Cliant.Api;
+using TestRPG.Client.Api;
 using TestRPG.Client.Api.Settings;
 
-namespace TestRPG.Cliant
+namespace TestRPG.Client
 {
     public sealed class HealthCheckBehaviour : MonoBehaviour
     {

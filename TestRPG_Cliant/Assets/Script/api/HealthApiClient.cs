@@ -2,10 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 
-namespace TestRPG.Cliant.Api
+namespace TestRPG.Client.Api
 {
     public sealed class HealthApiClient
     {
@@ -26,9 +25,8 @@ namespace TestRPG.Cliant.Api
         /// api/health エンドポイントに GET リクエストを送信し、
         /// サーバーのヘルスステータスを取得
         /// </summary>
-        /// <param name="onSuccess"></param>
-        /// <param name="onFailure"></param>
-        public async Task<string> GetHealthAsync (CancellationToken cancellationToken)
+        /// <param name="cancellationToken"></param>
+        public async UniTask<string> GetHealthAsync (CancellationToken cancellationToken)
         {
             using var request = UnityWebRequest.Get($"{baseUrl}/health");
 
