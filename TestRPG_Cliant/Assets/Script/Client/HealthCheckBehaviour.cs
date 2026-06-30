@@ -32,12 +32,11 @@ namespace TestRPG.Client
         /// <returns></returns>
         private async UniTaskVoid CheckHealthAsync(CancellationToken cancellationToken)
         {
-            // HealthApiClient を作成して api/health エンドポイントにリクエストを送る
-            var cliant = new HealthApiClient(apiSettings.BaseUrl);
-
             try
             {
-                var status = await cliant.GetHealthAsync(cancellationToken);
+                // HealthApiClient を作成して api/health エンドポイントにリクエストを送る
+                var client = new HealthApiClient(apiSettings.BaseUrl);
+                var status = await client.GetHealthAsync(cancellationToken);
                 Debug.Log($"<color=green>Health API status: {status}</color>");
             }
             catch (OperationCanceledException)

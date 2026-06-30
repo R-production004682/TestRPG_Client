@@ -13,11 +13,23 @@ namespace TestRPG.Client.Tests.EditMode
         /// <param name="invalidUrl"></param>
         [TestCase(null)]
         [TestCase("")]
+        [TestCase("localhost:5000")]
+        [TestCase("ftp://localhost:5000")]
         public void Constructor_InvalidBaseUrl_ThrowsArgumentException(string invalidUrl)
         {
             // Act & Assert
             var ex = Assert.Throws<ArgumentException>(() => new HealthApiClient(invalidUrl));
-            Assert.That(ex.Message, Does.Contain("Base URL cannot be null or empty"));
+            Assert.That(ex.Message, Does.Contain("Base URL must be an absolute HTTP or HTTPS URL"));
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("localhost:5000")]
+        [TestCase("ftp://localhost:5000")]
+        public void EnemyApiClientConstructor_InvalidBaseUrl_ThrowsArgumentException(string invalidUrl)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => new EnemyApiClient(invalidUrl));
+            Assert.That(ex.Message, Does.Contain("Base URL must be an absolute HTTP or HTTPS URL"));
         }
     }
 }

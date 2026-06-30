@@ -25,10 +25,8 @@ namespace TestRPG.Client.Tests.PlayMode
             // Act
             yield return null;
 
-            // Assert
-            Assert.Pass("クラッシュせずに安全に終了しました。");
-
             Object.Destroy(go);
+            yield return null;
         }
     }
 }
