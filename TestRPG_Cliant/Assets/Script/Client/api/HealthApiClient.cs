@@ -8,16 +8,17 @@ namespace TestRPG.Client.Api
 {
     public sealed class HealthApiClient
     {
-        private readonly string baseUrl;
+        private readonly string _baseUrl;
 
         public HealthApiClient(string baseUrl)
         {
-            if (string.IsNullOrEmpty(baseUrl))
+            if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             {
-                throw new ArgumentException("Base URL cannot be null or empty.", nameof(baseUrl));
+                throw new ArgumentException("Base URL must be an absolute HTTP or HTTPS URL.", nameof(baseUrl));
             }
 
-            this.baseUrl = baseUrl.TrimEnd('/');
+            _baseUrl = baseUrl.TrimEnd('/');
         }
 
         /// <summary>
@@ -26,9 +27,9 @@ namespace TestRPG.Client.Api
         /// サーバーのヘルスステータスを取得
         /// </summary>
         /// <param name="cancellationToken"></param>
-        public async UniTask<string> GetHealthAsync (CancellationToken cancellationToken)
+        public async UniTask<string> GetHealthAsync(CancellationToken cancellationToken)
         {
-            using var request = UnityWebRequest.Get($"{baseUrl}/health");
+            using var request = UnityWebRequest.Get($"{_baseUrl}{ApiRoutes.Health}");
 
             // キャンセル処理のサポート
             await request.SendWebRequest().ToUniTask(cancellationToken: cancellationToken);

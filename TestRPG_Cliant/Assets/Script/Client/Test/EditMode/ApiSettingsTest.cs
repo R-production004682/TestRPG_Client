@@ -8,7 +8,7 @@ namespace TestRPG.Client.Tests.EditMode
     {
         /// <summary>
         /// 内容 : 末尾のスラッシュは削除されることを確認する
-        /// 期待挙動 : "http://localhost5000/api/" -> "http://localhost5000/api"
+        /// 期待挙動 : "http://localhost:5000/" -> "http://localhost:5000"
         /// </summary>
         [Test]
         public void BaseUrl_EnsureThatTrailingSlashIsRemoved()
@@ -16,10 +16,10 @@ namespace TestRPG.Client.Tests.EditMode
             // Arrange
             var settings = ScriptableObject.CreateInstance<ApiSettings>();
 
-            JsonUtility.FromJsonOverwrite("{\"baseUrl\" : \"http://localhost5000/api/\"}", settings);
+            JsonUtility.FromJsonOverwrite("{\"baseUrl\" : \"http://localhost:5000/\"}", settings);
 
             // Act & Assert
-            Assert.AreEqual("http://localhost5000/api", settings.BaseUrl);
+            Assert.AreEqual("http://localhost:5000", settings.BaseUrl);
         }
 
         /// <summary>

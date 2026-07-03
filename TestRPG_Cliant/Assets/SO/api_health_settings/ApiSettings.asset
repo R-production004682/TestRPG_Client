@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a29f679e2444c34c8f6ab1b1dfc0076, type: 3}
   m_Name: ApiSettings
   m_EditorClassIdentifier: Assembly-CSharp::TestRPG.Client.Api.Settings.ApiSettings
-  baseUrl: http://localhost:5000/api
+  baseUrl: http://192.168.11.7:5000
